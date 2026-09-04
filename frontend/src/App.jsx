@@ -202,10 +202,13 @@ function App() {
     setQaError("");
     setError("");
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    // Scroll to the restored analysis instead of returning to the top.
+    setTimeout(() => {
+      document.getElementById("analysis-results")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 50);
   };
 
   // ============================================================
@@ -2269,6 +2272,7 @@ function App() {
                       }}
                     >
                       <button
+                        type="button"
                         onClick={() => openResearchHistory(historyItem)}
                         style={{
                           padding: "9px 13px",
@@ -2285,6 +2289,7 @@ function App() {
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => deleteResearchHistory(historyItem.id)}
                         style={{
                           padding: "9px 13px",
@@ -2725,7 +2730,7 @@ function App() {
         {/* ==================================================== */}
 
         {analysis && (
-          <section>
+          <section id="analysis-results">
             <div
               style={{
                 background: "white",
