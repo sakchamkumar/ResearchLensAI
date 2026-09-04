@@ -12,14 +12,26 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ============================================================
-// MIDDLEWARE
+// CORS
 // ============================================================
 
-// Allow frontend requests
-app.use(cors());
+const allowedOrigin = process.env.FRONTEND_URL;
 
-// Research paper text can be large.
-// 1 MB gives enough room for the extracted text plus JSON overhead.
+if (allowedOrigin) {
+  app.use(
+    cors({
+      origin: allowedOrigin,
+    })
+  );
+} else {
+  // Local development fallback
+  app.use(cors());
+}
+
+// ============================================================
+// JSON BODY SIZE
+// ============================================================
+
 app.use(express.json({ limit: "1mb" }));
 
 // ============================================================
@@ -33,7 +45,7 @@ app.get("/", (req, res) => {
 });
 
 // ============================================================
-// API ROUTES
+// ROUTES
 // ============================================================
 
 app.use("/papers", papersRouter);
@@ -49,7 +61,6 @@ app.use("/comparison", comparisonRouter);
 app.use((error, req, res, next) => {
   console.error("Global server error:", error);
 
-  // JSON body too large
   if (error.type === "entity.too.large") {
     return res.status(413).json({
       success: false,
