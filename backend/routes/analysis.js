@@ -232,6 +232,22 @@ router.get("/test", async (req, res) => {
   } catch (error) {
     console.error("Gemini test error:", error);
 
+    if (error.status === 429) {
+      return res.status(429).json({
+        success: false,
+        error:
+          "Gemini's quota or rate limit has been reached. Please wait and try again later.",
+      });
+    }
+
+    if (error.status === 503) {
+      return res.status(503).json({
+        success: false,
+        error:
+          "Gemini is currently experiencing high demand. Please try again in a moment.",
+      });
+    }
+
     res.status(500).json({
       success: false,
       error: "Gemini API request failed.",
@@ -340,6 +356,22 @@ ${textForAnalysis}
     });
   } catch (error) {
     console.error("Research paper analysis error:", error);
+
+    // ========================================================
+    // GEMINI QUOTA / RATE LIMIT
+    // ========================================================
+
+    if (error.status === 429) {
+      return res.status(429).json({
+        success: false,
+        error:
+          "Gemini's quota or rate limit has been reached. Please wait and try again later.",
+      });
+    }
+
+    // ========================================================
+    // GEMINI TEMPORARY HIGH DEMAND
+    // ========================================================
 
     if (error.status === 503) {
       return res.status(503).json({
@@ -488,6 +520,22 @@ Analyze the paper now.
     });
   } catch (error) {
     console.error("Research gap detection error:", error);
+
+    // ========================================================
+    // GEMINI QUOTA / RATE LIMIT
+    // ========================================================
+
+    if (error.status === 429) {
+      return res.status(429).json({
+        success: false,
+        error:
+          "Gemini's quota or rate limit has been reached. Please wait and try again later.",
+      });
+    }
+
+    // ========================================================
+    // GEMINI TEMPORARY HIGH DEMAND
+    // ========================================================
 
     if (error.status === 503) {
       return res.status(503).json({
