@@ -15,16 +15,28 @@ const ai = new GoogleGenAI({
 });
 
 // ============================================================
+// HELPER
+// ============================================================
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ============================================================
 // GENERATE TEXT WITH RETRY
 // ============================================================
 
 async function generateWithGemini(prompt, config = {}) {
-  const MAX_RETRIES = 3;
+  const MAX_ATTEMPTS = 5;
 
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+  // Exponential backoff:
+  // 5s → 10s → 20s → 40s
+  const RETRY_DELAYS = [5000, 10000, 20000, 40000];
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
       console.log(
-        `Gemini request attempt ${attempt}/${MAX_RETRIES}...`
+        `Gemini request attempt ${attempt}/${MAX_ATTEMPTS}...`
       );
 
       const response = await ai.models.generateContent({
@@ -37,54 +49,53 @@ async function generateWithGemini(prompt, config = {}) {
 
       return response.text;
     } catch (error) {
+      const status = error?.status;
+
       console.error(
         `Gemini request failed on attempt ${attempt}:`,
         error
       );
 
-      const status = error?.status;
+      // ========================================================
+      // QUOTA / RATE LIMIT
+      // ========================================================
 
-      // --------------------------------------------------------
-      // QUOTA EXCEEDED
-      // --------------------------------------------------------
-      // Do NOT retry 429 errors.
-      // A quota error will not be fixed by immediately sending
-      // the same request again.
-      // --------------------------------------------------------
-
+      // Do NOT retry 429 automatically.
+      // The route handling the request will return a useful
+      // quota message to the user.
       if (status === 429) {
         throw error;
       }
 
-      // --------------------------------------------------------
-      // RETRY TEMPORARY SERVER / HIGH-DEMAND ERRORS
-      // --------------------------------------------------------
+      // ========================================================
+      // TEMPORARY SERVER / HIGH DEMAND
+      // ========================================================
 
-      if (status === 503 && attempt < MAX_RETRIES) {
-        const delay = attempt * 3000;
+      if (status === 503 && attempt < MAX_ATTEMPTS) {
+        const delay = RETRY_DELAYS[attempt - 1];
 
         console.log(
-          `Gemini temporarily unavailable. Retrying in ${
+          `Gemini is temporarily unavailable. Retrying in ${
             delay / 1000
           } seconds...`
         );
 
-        await new Promise((resolve) =>
-          setTimeout(resolve, delay)
-        );
+        await sleep(delay);
 
         continue;
       }
 
-      // --------------------------------------------------------
+      // ========================================================
       // FINAL ERROR
-      // --------------------------------------------------------
+      // ========================================================
 
       throw error;
     }
   }
 
-  throw new Error("Gemini request failed after multiple attempts.");
+  throw new Error(
+    "Gemini request failed after multiple retry attempts."
+  );
 }
 
 module.exports = generateWithGemini;
