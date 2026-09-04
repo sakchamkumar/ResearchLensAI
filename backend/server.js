@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 
 const papersRouter = require("./routes/papers");
@@ -29,13 +30,57 @@ if (allowedOrigin) {
 }
 
 // ============================================================
-// JSON BODY SIZE
+// BODY SIZE LIMIT
 // ============================================================
 
 app.use(express.json({ limit: "1mb" }));
 
 // ============================================================
-// HEALTH CHECK
+// GENERAL API RATE LIMIT
+// ============================================================
+//
+// Protects the backend from excessive requests.
+//
+// 100 requests per 15 minutes per IP.
+//
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+
+  message: {
+    success: false,
+    error:
+      "Too many requests from this IP. Please wait a few minutes and try again.",
+  },
+});
+
+// ============================================================
+// AI RATE LIMIT
+// ============================================================
+//
+// AI endpoints are more expensive because they call Gemini.
+//
+// 20 AI requests per 15 minutes per IP.
+//
+
+const aiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+
+  message: {
+    success: false,
+    error:
+      "Too many AI requests. Please wait a few minutes before trying again.",
+  },
+});
+
+// ============================================================
+// BASIC ROUTE
 // ============================================================
 
 app.get("/", (req, res) => {
@@ -45,14 +90,23 @@ app.get("/", (req, res) => {
 });
 
 // ============================================================
+// GENERAL API PROTECTION
+// ============================================================
+
+app.use(generalLimiter);
+
+// ============================================================
 // ROUTES
 // ============================================================
 
+// PDF upload/extraction
 app.use("/papers", papersRouter);
-app.use("/analysis", analysisRouter);
-app.use("/qa", qaRouter);
-app.use("/ideas", ideasRouter);
-app.use("/comparison", comparisonRouter);
+
+// AI-powered routes
+app.use("/analysis", aiLimiter, analysisRouter);
+app.use("/qa", aiLimiter, qaRouter);
+app.use("/ideas", aiLimiter, ideasRouter);
+app.use("/comparison", aiLimiter, comparisonRouter);
 
 // ============================================================
 // GLOBAL ERROR HANDLER
