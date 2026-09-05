@@ -55,6 +55,23 @@ function App() {
   const [error, setError] = useState("");
 
   // ============================================================
+  // LANDING PAGE / WORKSPACE NAVIGATION
+  // ============================================================
+
+  const [showLanding, setShowLanding] = useState(true);
+  const [companyPage, setCompanyPage] = useState(null);
+
+  const openCompanyPage = (page) => {
+    setCompanyPage(page);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const closeCompanyPage = () => {
+    setCompanyPage(null);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  // ============================================================
   // RESEARCH DASHBOARD STATE
   // ============================================================
 
@@ -1717,10 +1734,15 @@ function App() {
   // UI
   // ============================================================
 
-  return (
+  return companyPage ? (
+    <CompanyPage page={companyPage} onBack={closeCompanyPage} onNavigate={openCompanyPage} />
+  ) : showLanding ? (
+    <LandingPage onStart={() => setShowLanding(false)} onCompanyNavigate={openCompanyPage} />
+  ) : (
     <div
       style={{
         minHeight: "100vh",
+        width: "100%",
         background:
           "linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #eef2ff 100%)",
         fontFamily:
@@ -1728,6 +1750,19 @@ function App() {
         color: "#1f2937",
       }}
     >
+      <style>{`
+        html, body, #root {
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        body {
+          overflow-x: hidden;
+        }
+      `}</style>
+
       {/* ====================================================== */}
       {/* TOP NAVBAR */}
       {/* ====================================================== */}
@@ -1745,7 +1780,7 @@ function App() {
       >
         <div
           style={{
-            maxWidth: "1100px",
+            width: "100%",
             margin: "0 auto",
             display: "flex",
             alignItems: "center",
@@ -1777,24 +1812,53 @@ function App() {
 
           <div
             style={{
-              padding: "7px 12px",
-              borderRadius: "999px",
-              background: "#ecfdf5",
-              color: "#047857",
-              fontSize: "12px",
-              fontWeight: "600",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              flexWrap: "wrap",
+              justifyContent: "flex-end",
             }}
           >
-            ● AI Ready
+            <button
+              type="button"
+              onClick={() => setShowLanding(true)}
+              style={{
+                border: "1px solid #e0e7ff",
+                background: "#f8faff",
+                color: "#4338ca",
+                padding: "9px 14px",
+                borderRadius: "10px",
+                fontSize: "12px",
+                fontWeight: "800",
+                cursor: "pointer",
+              }}
+            >
+              ← Back to Landing Page
+            </button>
+
+            <div
+              style={{
+                padding: "7px 12px",
+                borderRadius: "999px",
+                background: "#ecfdf5",
+                color: "#047857",
+                fontSize: "12px",
+                fontWeight: "600",
+              }}
+            >
+              ● AI Ready
+            </div>
           </div>
         </div>
       </header>
 
       <main
         style={{
-          maxWidth: "1100px",
+          width: "100%",
+          maxWidth: "none",
+          boxSizing: "border-box",
           margin: "0 auto",
-          padding: "45px 20px 70px",
+          padding: "45px clamp(20px, 5vw, 72px) 70px",
         }}
       >
         {/* ==================================================== */}
@@ -3758,23 +3822,1234 @@ function App() {
         )}
       </main>
 
-      {/* ====================================================== */}
-      {/* FOOTER */}
-      {/* ====================================================== */}
+      <ResearchLensFooter onCompanyNavigate={openCompanyPage} />
+    </div>
+  );
+}
 
-      <footer
+// ============================================================
+// LANDING PAGE
+// ============================================================
+
+function LandingPage({ onStart, onCompanyNavigate }) {
+  const scrollToFeatures = () => {
+    document.getElementById("researchlens-features")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const goTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        width: "100%",
+        background: "#ffffff",
+        fontFamily:
+          "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif",
+        color: "#111827",
+      }}
+    >
+      <style>{`
+        html, body, #root {
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        body {
+          overflow-x: hidden;
+        }
+        @media (max-width: 900px) {
+          .researchlensai-landing-hero {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .researchlensai-landing-hero {
+            gap: 35px !important;
+          }
+        }
+      `}</style>
+
+      {/* LANDING HEADER */}
+      <header
         style={{
-          borderTop: "1px solid #e5e7eb",
-          padding: "25px 20px",
-          textAlign: "center",
-          color: "#9ca3af",
-          fontSize: "13px",
-          background: "white",
+          width: "100%",
+          boxSizing: "border-box",
+          padding: "18px clamp(20px, 5vw, 72px)",
+          borderBottom: "1px solid #e5e7eb",
+          background: "rgba(255,255,255,0.96)",
+          position: "sticky",
+          top: 0,
+          zIndex: 20,
+          backdropFilter: "blur(12px)",
         }}
       >
-        ResearchLensAI • AI-powered research understanding
-      </footer>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "24px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              minWidth: 0,
+            }}
+          >
+            <img
+              src="/researchlensai-icon.png"
+              alt="ResearchLensAI"
+              style={{
+                width: "46px",
+                height: "46px",
+                borderRadius: "12px",
+                objectFit: "cover",
+                boxShadow: "0 7px 20px rgba(79,70,229,0.18)",
+                flexShrink: 0,
+              }}
+            />
+
+            <div>
+              <div
+                style={{
+                  fontSize: "23px",
+                  fontWeight: "900",
+                  color: "#312e81",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                ResearchLensAI
+              </div>
+              <div
+                style={{
+                  marginTop: "2px",
+                  color: "#6b7280",
+                  fontSize: "12px",
+                }}
+              >
+                AI-Powered Research Intelligence
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onStart}
+            style={{
+              border: "none",
+              borderRadius: "12px",
+              padding: "12px 20px",
+              background: "#4f46e5",
+              color: "white",
+              fontWeight: "800",
+              fontSize: "14px",
+              cursor: "pointer",
+              boxShadow: "0 8px 22px rgba(79,70,229,0.22)",
+            }}
+          >
+            Open ResearchLensAI →
+          </button>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <main style={{ width: "100%" }}>
+        <section
+          style={{
+            width: "100%",
+            boxSizing: "border-box",
+            padding:
+              "clamp(65px, 9vw, 115px) clamp(20px, 7vw, 100px) 85px",
+            background:
+              "linear-gradient(135deg, #eef2ff 0%, #ffffff 52%, #eef2ff 100%)",
+          }}
+        >
+          <div
+            className="researchlensai-landing-hero"
+            style={{
+              width: "100%",
+              display: "grid",
+              gridTemplateColumns: "minmax(0, 1.08fr) minmax(360px, 0.92fr)",
+              alignItems: "center",
+              gap: "clamp(35px, 6vw, 90px)",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: "8px 15px",
+                  borderRadius: "999px",
+                  background: "#e0e7ff",
+                  color: "#4338ca",
+                  fontSize: "12px",
+                  fontWeight: "900",
+                  letterSpacing: "0.08em",
+                  marginBottom: "22px",
+                }}
+              >
+                ✦ RESEARCH INTELLIGENCE
+              </div>
+
+              <h1
+                style={{
+                  margin: 0,
+                  maxWidth: "850px",
+                  fontSize: "clamp(48px, 6.4vw, 88px)",
+                  lineHeight: "0.98",
+                  letterSpacing: "-0.055em",
+                  fontWeight: "950",
+                  color: "#111827",
+                }}
+              >
+                Understand research.
+                <br />
+                <span style={{ color: "#4f46e5" }}>
+                  Discover what's next.
+                </span>
+              </h1>
+
+              <p
+                style={{
+                  maxWidth: "760px",
+                  margin: "28px 0 0",
+                  color: "#4b5563",
+                  fontSize: "clamp(16px, 1.5vw, 19px)",
+                  lineHeight: "1.75",
+                }}
+              >
+                ResearchLensAI helps you read academic papers faster,
+                uncover research gaps, generate new research directions,
+                ask questions, and compare studies — all in one
+                AI-powered research workspace.
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  flexWrap: "wrap",
+                  marginTop: "30px",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={onStart}
+                  style={{
+                    border: "none",
+                    borderRadius: "12px",
+                    padding: "15px 22px",
+                    background: "#4f46e5",
+                    color: "white",
+                    fontWeight: "850",
+                    fontSize: "15px",
+                    cursor: "pointer",
+                    boxShadow: "0 10px 25px rgba(79,70,229,0.22)",
+                  }}
+                >
+                  Start Exploring Research →
+                </button>
+
+                <button
+                  type="button"
+                  onClick={scrollToFeatures}
+                  style={{
+                    border: "1px solid #d1d5db",
+                    borderRadius: "12px",
+                    padding: "15px 22px",
+                    background: "white",
+                    color: "#374151",
+                    fontWeight: "800",
+                    fontSize: "15px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Explore Features
+                </button>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(150px, 1fr))",
+                  gap: "18px",
+                  marginTop: "42px",
+                  maxWidth: "760px",
+                }}
+              >
+                {[
+                  ["📄", "Analyze papers", "Understand the core of a study."],
+                  ["🔍", "Find gaps", "Spot opportunities for new work."],
+                  ["💡", "Generate ideas", "Turn insights into directions."],
+                ].map(([icon, title, description]) => (
+                  <div key={title}>
+                    <div
+                      style={{
+                        fontSize: "20px",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      {icon}
+                    </div>
+                    <div
+                      style={{
+                        fontWeight: "850",
+                        fontSize: "14px",
+                        color: "#111827",
+                      }}
+                    >
+                      {title}
+                    </div>
+                    <div
+                      style={{
+                        color: "#6b7280",
+                        fontSize: "12px",
+                        lineHeight: "1.5",
+                        marginTop: "3px",
+                      }}
+                    >
+                      {description}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* WORKFLOW VISUAL */}
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "650px",
+                justifySelf: "center",
+                border: "1px solid #dbe2ff",
+                borderRadius: "28px",
+                padding: "clamp(22px, 3vw, 36px)",
+                boxSizing: "border-box",
+                background:
+                  "linear-gradient(145deg, #ffffff 0%, #f8faff 100%)",
+                boxShadow: "0 25px 70px rgba(49,46,129,0.12)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginBottom: "28px",
+                }}
+              >
+                <img
+                  src="/researchlensai-icon.png"
+                  alt=""
+                  style={{
+                    width: "128px",
+                    height: "128px",
+                    borderRadius: "28px",
+                    objectFit: "cover",
+                    boxShadow: "0 15px 35px rgba(79,70,229,0.2)",
+                  }}
+                />
+              </div>
+
+              <div
+                style={{
+                  textAlign: "center",
+                  color: "#6366f1",
+                  fontSize: "11px",
+                  fontWeight: "900",
+                  letterSpacing: "0.09em",
+                  marginBottom: "14px",
+                }}
+              >
+                RESEARCH WORKFLOW
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(2, minmax(0, 1fr))",
+                  gap: "10px",
+                }}
+              >
+                {[
+                  ["📄", "Analyze"],
+                  ["🔎", "Find gaps"],
+                  ["💡", "Generate ideas"],
+                  ["💬", "Ask questions"],
+                  ["⚖️", "Compare papers"],
+                  ["📊", "Track progress"],
+                ].map(([icon, label]) => (
+                  <div
+                    key={label}
+                    style={{
+                      padding: "18px 12px",
+                      borderRadius: "13px",
+                      background: "#ffffff",
+                      border: "1px solid #e5e7eb",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      fontSize: "13px",
+                      fontWeight: "800",
+                      color: "#374151",
+                    }}
+                  >
+                    <span style={{ fontSize: "19px" }}>{icon}</span>
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FEATURES */}
+        <section
+          id="researchlens-features"
+          style={{
+            width: "100%",
+            boxSizing: "border-box",
+            padding: "85px clamp(20px, 7vw, 100px)",
+            background: "#ffffff",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "1250px",
+              margin: "0 auto",
+            }}
+          >
+            <div
+              style={{
+                textAlign: "center",
+                marginBottom: "45px",
+              }}
+            >
+              <div
+                style={{
+                  color: "#6366f1",
+                  fontSize: "12px",
+                  fontWeight: "900",
+                  letterSpacing: "0.09em",
+                  marginBottom: "9px",
+                }}
+              >
+                EVERYTHING IN ONE WORKSPACE
+              </div>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "clamp(32px, 4vw, 52px)",
+                  letterSpacing: "-0.035em",
+                  color: "#111827",
+                }}
+              >
+                Built for serious research.
+              </h2>
+              <p
+                style={{
+                  margin: "14px auto 0",
+                  maxWidth: "650px",
+                  color: "#6b7280",
+                  lineHeight: "1.7",
+                  fontSize: "16px",
+                }}
+              >
+                Move from understanding a paper to discovering what
+                you could research next without switching between tools.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: "16px",
+              }}
+            >
+              {[
+                [
+                  "🧠",
+                  "AI Paper Analysis",
+                  "Extract objectives, methodology, findings, contributions, limitations, and future directions.",
+                ],
+                [
+                  "🔍",
+                  "Research Gap Detection",
+                  "Identify meaningful unanswered questions and potential areas for further investigation.",
+                ],
+                [
+                  "💡",
+                  "Research Idea Generator",
+                  "Turn paper insights and detected gaps into structured research ideas and next steps.",
+                ],
+                [
+                  "💬",
+                  "Ask Your Paper",
+                  "Ask questions about the uploaded paper and receive answers grounded in its content.",
+                ],
+                [
+                  "⚖️",
+                  "Paper Comparison",
+                  "Compare two studies across focus, methodology, findings, contributions, and limitations.",
+                ],
+                [
+                  "📊",
+                  "Research Dashboard",
+                  "Track papers analyzed, gaps detected, ideas generated, comparisons, and questions asked.",
+                ],
+              ].map(([icon, title, description]) => (
+                <div
+                  key={title}
+                  style={{
+                    padding: "25px",
+                    borderRadius: "18px",
+                    border: "1px solid #e5e7eb",
+                    background: "#ffffff",
+                    boxShadow: "0 8px 30px rgba(31,41,55,0.05)",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "#eef2ff",
+                      fontSize: "22px",
+                      marginBottom: "17px",
+                    }}
+                  >
+                    {icon}
+                  </div>
+                  <h3
+                    style={{
+                      margin: "0 0 9px",
+                      color: "#111827",
+                      fontSize: "18px",
+                    }}
+                  >
+                    {title}
+                  </h3>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#6b7280",
+                      fontSize: "14px",
+                      lineHeight: "1.65",
+                    }}
+                  >
+                    {description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section
+          style={{
+            width: "100%",
+            boxSizing: "border-box",
+            padding: "20px clamp(20px, 7vw, 100px) 85px",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              borderRadius: "24px",
+              padding: "clamp(35px, 5vw, 60px)",
+              background: "#111827",
+              color: "white",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: "30px",
+              flexWrap: "wrap",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  color: "#a5b4fc",
+                  fontSize: "12px",
+                  fontWeight: "900",
+                  letterSpacing: "0.09em",
+                  marginBottom: "9px",
+                }}
+              >
+                START YOUR RESEARCH
+              </div>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "clamp(28px, 4vw, 46px)",
+                  letterSpacing: "-0.035em",
+                }}
+              >
+                Start with a research paper.
+              </h2>
+              <p
+                style={{
+                  margin: "10px 0 0",
+                  color: "#d1d5db",
+                  lineHeight: "1.6",
+                }}
+              >
+                Upload it. Understand it. Find what's missing.
+                Discover what's next.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={onStart}
+              style={{
+                border: "none",
+                borderRadius: "12px",
+                padding: "15px 22px",
+                background: "white",
+                color: "#312e81",
+                fontWeight: "900",
+                fontSize: "15px",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Open the Workspace →
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <ResearchLensFooter onBackToTop={goTop} onCompanyNavigate={onCompanyNavigate} />
     </div>
+  );
+}
+
+// ============================================================
+// COMPANY PAGES
+// ============================================================
+
+function CompanyPage({ page, onBack, onNavigate }) {
+  const content = {
+    about: {
+      label: "ABOUT RESEARCHLENSAI",
+      title: "Built to make research easier to understand.",
+      intro:
+        "ResearchLensAI is an AI-powered research workspace designed to help students, researchers, and learners understand academic papers faster and discover what to explore next.",
+      sections: [
+        [
+          "What ResearchLensAI does",
+          "Upload a research paper and use AI to understand its objectives, methodology, findings, contributions, limitations, and future directions.",
+        ],
+        [
+          "Why it exists",
+          "Academic papers can be difficult to read, especially when you are trying to identify a useful research direction. ResearchLensAI brings analysis, gap detection, idea generation, questions, and paper comparison into one workspace.",
+        ],
+        [
+          "Our goal",
+          "Help people spend less time getting lost in a paper and more time thinking about meaningful research questions.",
+        ],
+      ],
+    },
+    privacy: {
+      label: "PRIVACY POLICY",
+      title: "Your research stays under your control.",
+      intro:
+        "ResearchLensAI is designed to be clear about how research content is used while keeping the current MVP simple and transparent.",
+      sections: [
+        [
+          "Research papers",
+          "Papers uploaded for analysis are sent to the ResearchLensAI backend so the requested AI feature can process the paper. Do not upload confidential material unless you are authorized to do so.",
+        ],
+        [
+          "Browser storage",
+          "Research history and dashboard activity in the current MVP are stored locally in your browser. Clearing browser storage can remove those saved items.",
+        ],
+        [
+          "AI processing",
+          "Text submitted to AI features is processed by the configured AI service to generate the requested result. Avoid submitting information you are not permitted to share with an AI service.",
+        ],
+      ],
+    },
+    terms: {
+      label: "TERMS OF SERVICE",
+      title: "Use ResearchLensAI responsibly.",
+      intro:
+        "ResearchLensAI is intended for lawful research, learning, and analysis purposes.",
+      sections: [
+        [
+          "Research responsibility",
+          "AI-generated analysis, research gaps, ideas, and answers should be reviewed by the user. They are intended to assist research, not replace academic judgment or expert review.",
+        ],
+        [
+          "Uploaded content",
+          "You should only upload papers and other material that you have the right to use and process.",
+        ],
+        [
+          "Availability",
+          "AI services can experience temporary limits, delays, or outages. ResearchLensAI does not guarantee uninterrupted availability of every AI-powered feature.",
+        ],
+      ],
+    },
+    contact: {
+      label: "CONTACT RESEARCHLENSAI",
+      title: "Have a question or suggestion?",
+      intro:
+        "We would love to hear feedback about ResearchLensAI and ideas for improving the research workflow.",
+      sections: [
+        [
+          "Email",
+          "For questions, feedback, or project-related communication, use the contact email provided with the project.",
+        ],
+        [
+          "Feedback",
+          "Tell us which research workflow you use most, which feature could be improved, or what would make ResearchLensAI more useful for your work.",
+        ],
+      ],
+    },
+  }[page];
+
+  const links = [
+    ["about", "About Us"],
+    ["privacy", "Privacy Policy"],
+    ["terms", "Terms of Service"],
+    ["contact", "Contact Us"],
+  ];
+
+  if (!content) return null;
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        width: "100%",
+        margin: 0,
+        padding: 0,
+        background: "#ffffff",
+        color: "#111827",
+        fontFamily:
+          "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif",
+        display: "flex",
+        flexDirection: "column",
+        boxSizing: "border-box",
+      }}
+    >
+      <style>{`
+        html, body, #root {
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        body {
+          overflow-x: hidden;
+          background: #ffffff !important;
+        }
+        .researchlens-company-title,
+        .researchlens-company-title * {
+          color: #111827 !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+        .researchlens-company-heading,
+        .researchlens-company-heading * {
+          color: #1f2937 !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+      `}</style>
+
+      <header
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: "18px clamp(20px, 5vw, 72px)",
+          borderBottom: "1px solid #e5e7eb",
+          background: "#ffffff",
+          position: "sticky",
+          top: 0,
+          zIndex: 20,
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "20px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <img
+              src="/researchlensai-icon.png"
+              alt="ResearchLensAI"
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "12px",
+                objectFit: "cover",
+              }}
+            />
+            <div>
+              <div
+                style={{
+                  fontSize: "22px",
+                  fontWeight: "900",
+                  color: "#111827",
+                }}
+              >
+                ResearchLensAI
+              </div>
+              <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                AI-powered research intelligence
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onBack}
+            style={{
+              border: "none",
+              borderRadius: "10px",
+              background: "#4f46e5",
+              color: "#ffffff",
+              padding: "12px 20px",
+              fontWeight: "800",
+              cursor: "pointer",
+              fontSize: "14px",
+            }}
+          >
+            ← Back
+          </button>
+        </div>
+      </header>
+
+      <main
+        style={{
+          width: "100%",
+          flex: 1,
+          boxSizing: "border-box",
+          padding: "72px clamp(20px, 7vw, 110px) 90px",
+        }}
+      >
+        <div style={{ maxWidth: "980px", margin: "0 auto" }}>
+          <div
+            style={{
+              display: "inline-block",
+              padding: "9px 15px",
+              borderRadius: "999px",
+              background: "#eef2ff",
+              color: "#4f46e5",
+              fontSize: "12px",
+              fontWeight: "900",
+              letterSpacing: "0.08em",
+              marginBottom: "24px",
+            }}
+          >
+            {content.label}
+          </div>
+
+          <h1
+            className="researchlens-company-title"
+            style={{
+              margin: "0 0 24px",
+              color: "#111827",
+              fontSize: "clamp(40px, 6vw, 68px)",
+              lineHeight: "1.05",
+              letterSpacing: "-0.045em",
+              fontWeight: 900,
+              opacity: 1,
+            }}
+          >
+            {content.title}
+          </h1>
+
+          <p
+            style={{
+              margin: "0 0 48px",
+              maxWidth: "850px",
+              color: "#475569",
+              fontSize: "18px",
+              lineHeight: "1.8",
+              opacity: 1,
+            }}
+          >
+            {content.intro}
+          </p>
+
+          <div style={{ display: "grid", gap: "18px" }}>
+            {content.sections.map(([heading, body]) => (
+              <section
+                key={heading}
+                style={{
+                  padding: "28px 30px",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "18px",
+                  background: "#f8fafc",
+                  boxSizing: "border-box",
+                }}
+              >
+                <h2
+                  className="researchlens-company-heading"
+                  style={{
+                    margin: "0 0 10px",
+                    color: "#1f2937",
+                    fontSize: "20px",
+                    lineHeight: "1.3",
+                    fontWeight: 900,
+                    opacity: 1,
+                  }}
+                >
+                  {heading}
+                </h2>
+                <p
+                  style={{
+                    margin: 0,
+                    color: "#475569",
+                    lineHeight: "1.75",
+                    fontSize: "15px",
+                    opacity: 1,
+                  }}
+                >
+                  {body}
+                </p>
+              </section>
+            ))}
+          </div>
+
+          <div
+            style={{
+              marginTop: "52px",
+              paddingTop: "28px",
+              borderTop: "1px solid #e5e7eb",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "13px",
+                fontWeight: "900",
+                color: "#6b7280",
+                marginBottom: "15px",
+                letterSpacing: "0.05em",
+              }}
+            >
+              COMPANY
+            </div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+              {links.map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => onNavigate(key)}
+                  style={{
+                    border: "1px solid #dbe1ea",
+                    background: "#ffffff",
+                    color: "#4f46e5",
+                    borderRadius: "10px",
+                    padding: "10px 14px",
+                    fontWeight: "800",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <ResearchLensFooter onCompanyNavigate={onNavigate} />
+    </div>
+  );
+}
+
+// ============================================================
+// RESEARCHLENSAI FOOTER
+// ============================================================
+
+function ResearchLensFooter({ onBackToTop, onCompanyNavigate }) {
+  const goTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <>
+      <style>{`
+        .researchlens-footer-grid {
+          width: 100%;
+          max-width: 1250px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1.35fr 0.8fr 0.8fr 1fr;
+          gap: 45px;
+          text-align: left;
+        }
+        @media (max-width: 900px) {
+          .researchlens-footer-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 34px;
+          }
+        }
+        @media (max-width: 560px) {
+          .researchlens-footer-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+        }
+      `}</style>
+    <footer
+      style={{
+        width: "100%",
+        boxSizing: "border-box",
+        background: "#050505",
+        color: "#ffffff",
+        padding: "68px clamp(20px, 5vw, 72px) 30px",
+      }}
+    >
+      <div
+        className="researchlens-footer-grid"
+        style={{
+          width: "100%",
+          maxWidth: "1250px",
+          margin: "0 auto",
+          textAlign: "left",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              marginBottom: "18px",
+            }}
+          >
+            <img
+              src="/researchlensai-icon.png"
+              alt="ResearchLensAI"
+              style={{
+                width: "46px",
+                height: "46px",
+                borderRadius: "12px",
+                objectFit: "cover",
+              }}
+            />
+            <div
+              style={{
+                fontSize: "24px",
+                fontWeight: "900",
+              }}
+            >
+              ResearchLensAI
+            </div>
+          </div>
+
+          <p
+            style={{
+              margin: 0,
+              maxWidth: "330px",
+              color: "#a7a7a7",
+              fontSize: "15px",
+              lineHeight: "1.9",
+            }}
+          >
+            AI-powered research intelligence helping you understand
+            academic papers, discover research gaps, and find what's
+            next.
+          </p>
+        </div>
+
+        <div>
+          <h3
+            style={{
+              margin: "0 0 20px",
+              fontSize: "18px",
+              fontWeight: "850",
+            }}
+          >
+            Features
+          </h3>
+
+          {[
+            "AI Paper Analysis",
+            "Research Gap Detection",
+            "Research Idea Generator",
+            "Ask Your Paper",
+            "Paper Comparison",
+            "Research Dashboard",
+          ].map((item) => (
+            <div
+              key={item}
+              style={{
+                color: "#a7a7a7",
+                fontSize: "14px",
+                lineHeight: "2.05",
+              }}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <h3
+            style={{
+              margin: "0 0 20px",
+              fontSize: "18px",
+              fontWeight: "850",
+            }}
+          >
+            Company
+          </h3>
+
+          {[
+            ["about", "About Us"],
+            ["privacy", "Privacy Policy"],
+            ["terms", "Terms of Service"],
+            ["contact", "Contact Us"],
+          ].map(([page, label]) => (
+            <button
+              key={page}
+              type="button"
+              onClick={() => onCompanyNavigate?.(page)}
+              style={{
+                display: "block",
+                width: "fit-content",
+                padding: "0",
+                margin: "0",
+                border: "none",
+                background: "transparent",
+                color: "#a7a7a7",
+                fontSize: "14px",
+                lineHeight: "2.05",
+                cursor: "pointer",
+                textAlign: "left",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div>
+          <h3
+            style={{
+              margin: "0 0 20px",
+              fontSize: "18px",
+              fontWeight: "850",
+            }}
+          >
+            Connect
+          </h3>
+
+          <div
+            style={{
+              color: "#a7a7a7",
+              fontSize: "14px",
+              marginBottom: "18px",
+              lineHeight: "1.7",
+            }}
+          >
+            🔬 ResearchLensAI
+          </div>
+
+          <a
+            href="https://github.com/sakchamkumar/ResearchLensAI"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              textDecoration: "none",
+              borderRadius: "12px",
+              background: "#111111",
+              color: "white",
+              padding: "11px 17px",
+              fontWeight: "800",
+              cursor: "pointer",
+            }}
+          >
+            GitHub
+          </a>
+        </div>
+      </div>
+
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "1250px",
+          margin: "55px auto 0",
+          paddingTop: "25px",
+          borderTop: "1px solid #242424",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "20px",
+          flexWrap: "wrap",
+        }}
+      >
+        <div
+          style={{
+            color: "#9ca3af",
+            fontSize: "14px",
+          }}
+        >
+          © 2026 ResearchLensAI. All rights reserved.
+        </div>
+
+        <button
+          type="button"
+          onClick={onBackToTop || goTop}
+          style={{
+            border: "none",
+            borderRadius: "999px",
+            background: "#111111",
+            color: "white",
+            padding: "12px 18px",
+            fontWeight: "800",
+            cursor: "pointer",
+          }}
+        >
+          ↑ Back to Top
+        </button>
+      </div>
+    </footer>
+    </>
   );
 }
 
