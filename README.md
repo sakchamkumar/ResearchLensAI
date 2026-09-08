@@ -187,3 +187,29 @@ ResearchLensAI follows a client-server architecture.
                        │
                        ▼
                 Structured Results
+
+## Screenshots
+
+### Landing Page
+![ResearchLensAI Landing Page](screenshots/01-ResearchLensAI-Landing.png)
+
+### PDF Upload
+![PDF Upload](screenshots/02-PDF-Upload.png)
+
+### AI Paper Analysis
+![AI Paper Analysis](screenshots/03-AI-Paper-Analysis.png)
+
+### Research Gap Detection
+![Research Gap Detection](screenshots/04-Research-Gaps.png)
+
+### AI Research Idea Generator
+![AI Research Idea Generator](screenshots/05-AI-Research-Idea.png)
+
+### Paper Q&A
+![Paper Q&A](screenshots/06-Paper-QA.png)
+
+### Paper Comparison
+![Paper Comparison](screenshots/07-Paper-Comparison.png)
+
+### Research History & Dashboard
+![Research History and Dashboard](screenshots/08-Research-History-Dashboard.png)
